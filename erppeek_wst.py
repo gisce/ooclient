@@ -3,6 +3,7 @@
 
 from erppeek import Client, Service
 import functools
+import xmlrpclib
 
 
 class ClientWST(Client):
@@ -26,11 +27,11 @@ class ClientWST(Client):
         def authenticated(method):
             return functools.partial(method, args[0], args[1], args[2])
         self._get_transaction = authenticated(self._sync.get_transaction)
-        self._execute_sync = authenticated(self._sync.execute)
         self._execute_bare = self._execute
+        self._execute_sync = authenticated(self._sync.execute)
+        self._close_bare = authenticated(self._sync.close)
         self._commit = authenticated(self._sync.commit)
         self._rollback = authenticated(self._sync.rollback)
-        self._close = authenticated(self._sync.close)
         self._begin = authenticated(self._sync.begin)
 
     _login = login
@@ -41,6 +42,8 @@ class ClientWST(Client):
         tid = self._begin()
         self.transaction_id = tid
         self._execute = functools.partial(self._execute_sync, tid)
+        # we change it on the service as it is called directly by base
+        self._sync.close = functools.partial(self._close_bare, tid)
         return self
 
     def get_transaction(self, transaction_id):
@@ -54,7 +57,12 @@ class ClientWST(Client):
         self._commit(self.transaction_id)
 
     def rollback(self):
-        self._rollback(self.transaction_id)
+        import xmlrpclib
+        try:
+            self._rollback(self.transaction_id)
+        except xmlrpclib.Fault as e:
+            if 'commands ignored until end of transaction block' not in str(e):
+                raise
 
-    def close(self):
-        self._close(self.transaction_id)
+
+
