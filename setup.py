@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='ERPpeek WST',
-    version=0.1,
+    version=0.2.0,
     license='BSD',
     description='Erppeek extension for using web services transactions',
     long_description='',
