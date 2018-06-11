@@ -3,7 +3,7 @@
 
 from erppeek import Client, Service
 import functools
-import xmlrpclib
+from six.moves import xmlrpc_client as xmlrpclib
 
 
 class ClientWST(Client):
