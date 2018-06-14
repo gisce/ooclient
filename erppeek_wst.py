@@ -54,7 +54,6 @@ class ClientWST(Client):
         self._commit(self.transaction_id)
 
     def rollback(self):
-        import xmlrpclib
         try:
             self._rollback(self.transaction_id)
         except xmlrpclib.Fault as e:
