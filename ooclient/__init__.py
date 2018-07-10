@@ -1,9 +1,34 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from erppeek import Client, Service
+from urlparse import urlparse
+from erppeek import Client as PeekClient, Service
 import functools
 from six.moves import xmlrpc_client as xmlrpclib
+
+
+def parse_client_url(url, db=None, user=None, password=None,
+                 transport=None, verbose=False):
+    url = urlparse(url)
+    server = '{p.scheme}://{p.hostname}:{p.port}'.format(p=url)
+    values = {
+        'server': server,
+        'db': db,
+        'user': user,
+        'password': password,
+        'transport': transport,
+        'verbose': verbose
+    }
+    if url.username:
+        values['user'] = url.username
+    if url.password:
+        values['password'] = url.password
+    if url.path.lstrip('/'):
+        values['db'] = url.path.lstrip('/')
+    return values
+
+
+class Client(PeekClient):
+    def __init__(self, url, *args, **kwargs):
+        params = parse_client_url(url, *args, **kwargs)
+        super(Client, self).__init__(**params)
 
 
 class ClientWST(Client):

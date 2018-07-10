@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='ERPpeek WST',
+    name='ooclient',
     version='0.2.3',
+    packages=find_packages(),
     license='BSD',
     description='Erppeek extension for using web services transactions',
     long_description='',
-    url='http://github.com/totaler/erppeek_wst',
-    author='Joan M. Grande',
-    author_email='totaler@gmail.com',
+    url='http://github.com/gisce/ooclient',
+    author='GISCE-TI, S.L.',
+    author_email='devel@gisce.net',
     install_requires=['erppeek', 'six'],
-    py_modules=['erppeek_wst'],
     platforms='any',
     keywords="openerp xml-rpc xmlrpc",
     classifiers=[
